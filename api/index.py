@@ -12,4 +12,4 @@ def hello():
 
 # 必须导出 app 对象供 Vercel 调用
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=7860)
