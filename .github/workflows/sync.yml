@@ -1,19 +1,30 @@
-name: Sync to Hugging Face
+name: Sync to Hugging Face Hub
 on:
   push:
     branches: [main]
+  # 支持在 GitHub 页面手动点击按钮触发
   workflow_dispatch:
 
 jobs:
-  build:
+  sync-to-hub:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Push to HF
+          lfs: true
+
+      - name: Push to Hugging Face
+        shell: bash
         env:
+          # 将 Secret 注入为环境变量，避免在日志中直接打印
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push --force https://huangky210:@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@huggingface.co/spaces/huangky210/huangky210/flask_demo main
+          # 1. 配置 Git 用户信息（防止某些环境要求验证）
+          git config --global user.email "huangky210@example.com"
+          git config --global user.name "huangky210"
+          
+          # 2. 强制推送代码到 Hugging Face Space
+          # 注意：URL 中的 huangky210 和 flask_demo 必须与你 HF 上的名字完全一致（区分大小写）
+          git push --force https://huangky210:$HF_TOKEN@huggingface.co/spaces/huangky210/flask_demo main
